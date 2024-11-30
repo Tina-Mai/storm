@@ -52,7 +52,7 @@ export default function RegionChart() {
 			}
 		}
 		setPrevRegions(regions);
-	}, [regions, isSimulating]);
+	}, [regions, isSimulating, remainingResources]);
 
 	// Clean up completed animations
 	useEffect(() => {
