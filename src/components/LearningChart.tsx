@@ -86,7 +86,7 @@ export default function LearningChart() {
 				type: "linear",
 				title: {
 					display: true,
-					text: "Attempt Number",
+					text: "Resources Allocated (Attempt Number)",
 				},
 				min: 1,
 				max: Math.min(totalResources, Math.max(rewardHistory.length + 15, 30)),

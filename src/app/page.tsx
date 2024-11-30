@@ -9,6 +9,7 @@ import BetaDistributionChart from "@/components/BetaDistributionChart";
 import LearningChart from "@/components/LearningChart";
 import ResourcesRemaining from "@/components/ResourcesRemaining";
 import Results from "@/components/Results";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
 	const { results } = useGlobal();
