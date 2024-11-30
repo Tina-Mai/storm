@@ -59,7 +59,7 @@ export const generateEffectiveness = (index: number, total: number) => {
 		return jStat.uniform.sample(0.2, 0.35);
 	} else {
 		// Random arms: p ∈ [0, 1] using uniform distribution
-		return jStat.uniform.sample(0, 1);
+		return jStat.uniform.sample(0.1, 0.9);
 	}
 };
 
