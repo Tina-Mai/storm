@@ -9,12 +9,14 @@ import BetaDistributionChart from "@/components/BetaDistributionChart";
 import LearningChart from "@/components/LearningChart";
 import ResourcesRemaining from "@/components/ResourcesRemaining";
 import Results from "@/components/Results";
+import About from "@/components/About";
 
 export default function Home() {
 	const { results } = useGlobal();
 
 	return (
 		<main className="vertical bg-white h-screen p-3">
+			<About />
 			<header className="horizontal justify-between items-center pb-2 -pt-1">
 				<div className="horizontal items-center gap-2">
 					<Ambulance size={24} />
