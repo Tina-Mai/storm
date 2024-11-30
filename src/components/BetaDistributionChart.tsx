@@ -6,6 +6,7 @@ import type { ChartData, ChartOptions } from "chart.js";
 import { useGlobal } from "@/context/globalContext";
 import Card from "@/components/ui/card";
 import { TooltipItem } from "chart.js";
+import TooltipComponent from "@/components/Tooltip";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -85,22 +86,23 @@ export default function BetaDistributionChart() {
 	return (
 		<Card>
 			<div className="vertical gap-1">
-				<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
+				<div className="horizontal items-center gap-2">
+					<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
+					<TooltipComponent>
+						<div className="vertical text-xs text-gray-600 gap-1">
+							<p className="font-semibold">How to read this chart:</p>
+							<ul className="list-disc pl-5 space-y-1">
+								<li>Each curve represents our belief about a region's success rate</li>
+								<li>Taller, narrower curves indicate more confident predictions</li>
+								<li>Curves shifted right indicate higher success rates</li>
+								<li>α increases with successes, β with failures</li>
+							</ul>
+						</div>
+					</TooltipComponent>
+				</div>
 				<p className="text-xs text-gray-500">Higher peaks and rightward shifts indicate more successful regions</p>
 			</div>
-
 			<Line data={data} options={options} />
-			<div className="mt-4 text-sm text-gray-600">
-				<p>
-					<strong>How to read this chart:</strong>
-				</p>
-				<ul className="list-disc pl-5 space-y-1">
-					<li>Each curve represents our belief about a region's success rate</li>
-					<li>Taller, narrower curves indicate more confident predictions</li>
-					<li>Curves shifted right indicate higher success rates</li>
-					<li>α increases with successes, β with failures</li>
-				</ul>
-			</div>
 		</Card>
 	);
 }

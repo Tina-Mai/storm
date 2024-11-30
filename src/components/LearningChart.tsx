@@ -6,6 +6,7 @@ import type { ChartData, ChartOptions } from "chart.js";
 import { useGlobal } from "@/context/globalContext";
 import { TooltipItem } from "chart.js";
 import Card from "@/components/ui/card";
+import TooltipComponent from "@/components/Tooltip";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ScatterController);
 
@@ -66,10 +67,6 @@ export default function LearningChart() {
 			legend: {
 				position: "top",
 			},
-			title: {
-				display: true,
-				text: "Learning Progress",
-			},
 			tooltip: {
 				callbacks: {
 					label: (context: TooltipItem<"line">) => {
@@ -108,16 +105,21 @@ export default function LearningChart() {
 
 	return (
 		<Card>
-			<Line data={data} options={options} />
-			<div className="mt-4 text-sm text-gray-600">
-				<strong>How to read this chart:</strong>
-				<ul className="list-disc pl-5 space-y-1">
-					<li>Gray dots show individual successes (1) and failures (0)</li>
-					<li>Green line shows recent performance (moving average)</li>
-					<li>Red dashed line shows overall success rate</li>
-					<li>Upward trends indicate the algorithm is learning</li>
-				</ul>
+			<div className="horizontal items-center gap-2">
+				<h2 className="font-semibold text-sm uppercase tracking-widest">Learning Progress</h2>
+				<TooltipComponent>
+					<div className="vertical text-xs text-gray-600 gap-1">
+						<p className="font-semibold">How to read this chart:</p>
+						<ul className="list-disc pl-5 space-y-1">
+							<li>Gray dots show individual successes (1) and failures (0)</li>
+							<li>Green line shows recent performance (moving average)</li>
+							<li>Red dashed line shows overall success rate</li>
+							<li>Upward trends indicate the algorithm is learning</li>
+						</ul>
+					</div>
+				</TooltipComponent>
 			</div>
+			<Line data={data} options={options} />
 		</Card>
 	);
 }

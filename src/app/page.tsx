@@ -16,30 +16,35 @@ export default function Home() {
 				<p className="font-mono text-2xl">STORM</p>
 				<p className="text-sm text-slate-500">Disaster relief resource optimization using Thompson Sampling</p>
 			</header>
-			<div className="flex-grow overflow-y-auto w-full bg-slate-100 border border-slate-200 rounded p-5 space-y-8">
-				<div className="text-center">
-					<p className="text-lg text-gray-500 mt-2">
-						Resources Remaining: {remainingResources} / {totalResources}
-					</p>
-					{results && (
+			<div className="flex-grow overflow-y-auto w-full bg-slate-100 border border-slate-200 rounded p-5">
+				<div className="grid grid-cols-5 gap-5">
+					{/* Status Column (2-col width) */}
+					<div className="col-span-3">
 						<Card>
-							<h3 className="text-lg font-semibold mb-2">Results</h3>
-							<p>Thompson Sampling: {results.thompsonSamplingSuccesses} successes</p>
-							<p>Uniform Allocation: {results.uniformAllocationSuccesses} successes</p>
-							<p className="text-green-600 font-semibold">
-								Improvement: {(((results.thompsonSamplingSuccesses - results.uniformAllocationSuccesses) / results.uniformAllocationSuccesses) * 100).toFixed(1)}%
-							</p>
+							<h2 className="font-semibold text-sm uppercase tracking-widest">Status</h2>
+							<div>
+								<h3 className="font-semibold">Resources Remaining</h3>
+								<p>
+									{remainingResources} / {totalResources}
+								</p>
+							</div>
+							{results && (
+								<div>
+									<h3 className="font-semibold">Final Results</h3>
+									<p>Thompson Sampling: {results.thompsonSamplingSuccesses} successes</p>
+									<p>Uniform Allocation: {results.uniformAllocationSuccesses} successes</p>
+									<p className="text-green-600 font-semibold">
+										Improvement: {(((results.thompsonSamplingSuccesses - results.uniformAllocationSuccesses) / results.uniformAllocationSuccesses) * 100).toFixed(1)}%
+									</p>
+								</div>
+							)}
 						</Card>
-					)}
-				</div>
-
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-					<div className="space-y-8">
-						<ControlPanel />
-						<RegionChart />
 					</div>
 
-					<div className="space-y-8">
+					{/* Charts Column (1-col width) */}
+					<div className="vertical col-span-2 gap-5">
+						<ControlPanel />
+						<RegionChart />
 						<BetaDistributionChart />
 						<LearningChart />
 					</div>

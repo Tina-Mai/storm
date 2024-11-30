@@ -5,6 +5,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { useGlobal } from "@/context/globalContext";
 import Card from "@/components/ui/card";
 import { TooltipItem } from "chart.js";
+import TooltipComponent from "@/components/Tooltip";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -29,6 +30,8 @@ export default function RegionChart() {
 
 	const options = {
 		responsive: true,
+		maintainAspectRatio: true,
+		aspectRatio: 2.5,
 		scales: {
 			x: {
 				stacked: true,
@@ -50,10 +53,6 @@ export default function RegionChart() {
 			legend: {
 				position: "top" as const,
 			},
-			title: {
-				display: true,
-				text: "Region Performance",
-			},
 			tooltip: {
 				callbacks: {
 					label: (context: TooltipItem<"bar">) => {
@@ -70,18 +69,21 @@ export default function RegionChart() {
 
 	return (
 		<Card>
-			<Bar data={data} options={options} />
-			<div className="mt-4 text-sm text-gray-600">
-				<p>
-					<strong>How to read this chart:</strong>
-				</p>
-				<ul className="list-disc pl-5 space-y-1">
-					<li>Green bars show successful resource allocations</li>
-					<li>Red bars show failed allocations</li>
-					<li>Taller total bars indicate more attempts in that region</li>
-					<li>Higher green-to-red ratio indicates better performance</li>
-				</ul>
+			<div className="horizontal items-center gap-2">
+				<h2 className="font-semibold text-sm uppercase tracking-widest">Region Performance</h2>
+				<TooltipComponent>
+					<div className="vertical text-xs text-gray-600 gap-1">
+						<p className="font-semibold">How to read this chart:</p>
+						<ul className="list-disc pl-5 space-y-1">
+							<li>Green bars show successful resource allocations</li>
+							<li>Red bars show failed allocations</li>
+							<li>Taller total bars indicate more attempts in that region</li>
+							<li>Higher green-to-red ratio indicates better performance</li>
+						</ul>
+					</div>
+				</TooltipComponent>
 			</div>
+			<Bar data={data} options={options} />
 		</Card>
 	);
 }
