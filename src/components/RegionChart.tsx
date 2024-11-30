@@ -132,10 +132,10 @@ export default function RegionChart() {
 						<div className="w-full h-2.5 mb-2 flex justify-center items-center">
 							{/* Container */}
 							<div
-								className="relative w-[90px] h-full bg-slate-100 rounded-full overflow-hidden"
+								className="relative w-[90px] h-full bg-slate-200/80 rounded-full overflow-hidden"
 								style={{
 									boxShadow: `
-										inset 0 1px 2px rgba(0,0,0,0.1),
+										inset 0 1px 2px rgba(0,0,0,0.2),
 										0 1px 0 rgba(255,255,255,0.5)
 									`,
 								}}
@@ -157,7 +157,7 @@ export default function RegionChart() {
 									}}
 								/>
 								{/* Center line */}
-								<div className="absolute left-[50%] top-0 w-[1px] h-full bg-slate-300/50" />
+								<div className="absolute left-[50%] top-0 w-[1px] h-full bg-slate-300" />
 							</div>
 						</div>
 
