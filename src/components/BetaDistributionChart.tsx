@@ -7,6 +7,7 @@ import { useGlobal } from "@/context/globalContext";
 import Card from "@/components/ui/card";
 import { TooltipItem } from "chart.js";
 import TooltipComponent from "@/components/Tooltip";
+import { useEffect, useState } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -25,6 +26,16 @@ const REGION_COLORS = [
 
 export default function BetaDistributionChart() {
 	const { regions } = useGlobal();
+	const [key, setKey] = useState(0);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setKey((prev) => prev + 1);
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	const xValues = Array.from({ length: 100 }, (_, i) => i / 100);
 
@@ -58,11 +69,7 @@ export default function BetaDistributionChart() {
 
 	const options: ChartOptions<"line"> = {
 		responsive: true,
-		maintainAspectRatio: true,
-		aspectRatio: 1.8,
-		animation: {
-			duration: 750,
-		},
+		maintainAspectRatio: false,
 		plugins: {
 			legend: {
 				position: "top",
@@ -99,25 +106,24 @@ export default function BetaDistributionChart() {
 	};
 
 	return (
-		<Card>
-			<div className="vertical gap-1 -mb-1">
-				<div className="horizontal items-center gap-2">
-					<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
-					<TooltipComponent>
-						<div className="vertical text-xs text-gray-600 gap-1">
-							<p className="font-semibold">How to read this chart:</p>
-							<ul className="list-disc pl-5 space-y-1">
-								<li>Each curve represents our belief about a region's success rate</li>
-								<li>Taller, narrower curves indicate more confident predictions</li>
-								<li>Curves shifted right indicate higher success rates</li>
-								<li>α increases with successes, β with failures</li>
-							</ul>
-						</div>
-					</TooltipComponent>
-				</div>
-				{/* <p className="text-xs text-gray-500">Higher peaks and rightward shifts indicate more successful regions</p> */}
+		<Card className="h-full flex flex-col">
+			<div className="horizontal items-center gap-2 mb-2">
+				<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
+				<TooltipComponent>
+					<div className="vertical text-xs text-gray-600 gap-1">
+						<p className="font-semibold">How to read this chart:</p>
+						<ul className="list-disc pl-5 space-y-1">
+							<li>Each curve represents our belief about a region's success rate</li>
+							<li>Taller, narrower curves indicate more confident predictions</li>
+							<li>Curves shifted right indicate higher success rates</li>
+							<li>α increases with successes, β with failures</li>
+						</ul>
+					</div>
+				</TooltipComponent>
 			</div>
-			<Line data={data} options={options} />
+			<div className="relative flex-grow min-h-0">
+				<Line key={key} data={data} options={options} />
+			</div>
 		</Card>
 	);
 }

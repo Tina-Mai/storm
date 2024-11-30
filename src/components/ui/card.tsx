@@ -1,5 +1,8 @@
-const Card = ({ children }: { children: React.ReactNode }) => {
-	return <div className="vertical p-4 bg-white border border-slate-200/70 rounded-md shadow-sm gap-3">{children}</div>;
-};
+interface CardProps {
+	children: React.ReactNode;
+	className?: string;
+}
 
-export default Card;
+export default function Card({ children, className = "" }: CardProps) {
+	return <div className={`bg-white rounded-lg border border-slate-200 p-4 ${className}`}>{children}</div>;
+}

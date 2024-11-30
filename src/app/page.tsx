@@ -23,7 +23,7 @@ export default function Home() {
 				<p className="text-sm text-slate-500">Disaster relief resource optimization using Thompson Sampling</p>
 			</header>
 			<div className="flex-grow overflow-y-auto w-full bg-slate-100 border border-slate-200 rounded p-4">
-				<div className="grid grid-cols-5 gap-5">
+				<div className="grid grid-cols-5 h-full gap-5">
 					{/* Status Column  */}
 					<div className="relative col-span-3 vertical gap-3 justify-between">
 						<div />
@@ -37,10 +37,16 @@ export default function Home() {
 					</div>
 
 					{/* Charts Column */}
-					<div className="col-span-2 vertical gap-3">
+					<div className="col-span-2 vertical gap-3 h-full">
 						<ControlPanel />
-						<BetaDistributionChart />
-						<LearningChart />
+						<div className="flex-grow vertical gap-3">
+							<div className="flex-1">
+								<BetaDistributionChart />
+							</div>
+							<div className="flex-1">
+								<LearningChart />
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -7,11 +7,22 @@ import { useGlobal } from "@/context/globalContext";
 import { TooltipItem } from "chart.js";
 import Card from "@/components/ui/card";
 import TooltipComponent from "@/components/Tooltip";
+import { useEffect, useState } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ScatterController);
 
 export default function LearningChart() {
 	const { rewardHistory, totalResources } = useGlobal();
+	const [key, setKey] = useState(0); // Add a key to force re-render
+
+	useEffect(() => {
+		const handleResize = () => {
+			setKey((prev) => prev + 1); // Force re-render on window resize
+		};
+
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
 
 	// Calculate moving average
 	const windowSize = 10;
@@ -53,8 +64,7 @@ export default function LearningChart() {
 
 	const options: ChartOptions<"line"> = {
 		responsive: true,
-		maintainAspectRatio: true,
-		aspectRatio: 2.3,
+		maintainAspectRatio: false,
 		plugins: {
 			legend: {
 				position: "top",
@@ -99,8 +109,8 @@ export default function LearningChart() {
 	};
 
 	return (
-		<Card>
-			<div className="horizontal items-center gap-2 -mb-1">
+		<Card className="h-full flex flex-col">
+			<div className="horizontal items-center gap-2 mb-2">
 				<h2 className="font-semibold text-sm uppercase tracking-widest">Learning Progress</h2>
 				<TooltipComponent>
 					<div className="vertical text-xs text-gray-600 gap-1">
@@ -113,7 +123,9 @@ export default function LearningChart() {
 					</div>
 				</TooltipComponent>
 			</div>
-			<Line data={data} options={options} />
+			<div className="relative flex-grow min-h-0">
+				<Line key={key} data={data} options={options} />
+			</div>
 		</Card>
 	);
 }
