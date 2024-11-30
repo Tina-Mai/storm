@@ -5,116 +5,120 @@ import RegionChart from "@/components/RegionChart";
 import ControlPanel from "@/components/ControlPanel";
 import BetaDistributionChart from "@/components/BetaDistributionChart";
 import RewardTrendChart from "@/components/RewardTrendChart";
-import { Region } from "@/types/simulation";
-
-// Poisson random number generator
-const poissonRandom = (lambda: number): number => {
-	let L = Math.exp(-lambda);
-	let k = 0;
-	let p = 1;
-
-	do {
-		k++;
-		p *= Math.random();
-	} while (p > L);
-
-	return k - 1;
-};
+import { Region, SimulationResults } from "@/types/simulation";
 
 export default function Home() {
 	const [numRegions, setNumRegions] = useState(3);
-	const [baseSeverity, setBaseSeverity] = useState(5);
 	const [regions, setRegions] = useState<Region[]>([]);
 	const [totalResources, setTotalResources] = useState(300);
+	const [remainingResources, setRemainingResources] = useState(300);
 	const [isSimulating, setIsSimulating] = useState(false);
 	const [rewardHistory, setRewardHistory] = useState<number[]>([]);
-	const [allocatedResources, setAllocatedResources] = useState(0);
-	const [cumulativeAllocations, setCumulativeAllocations] = useState<{ [key: number]: number }>({});
+	const [results, setResults] = useState<SimulationResults | null>(null);
 
-	// Initialize regions with Poisson-distributed demands
+	// Helper to generate effectiveness values with high variance
+	const generateEffectiveness = (index: number, total: number) => {
+		// Pre-determine which indices will be good and bad
+		const goodIndex = Math.floor(Math.random() * total);
+		let badIndex;
+		do {
+			badIndex = Math.floor(Math.random() * total);
+		} while (badIndex === goodIndex);
+
+		if (index === goodIndex) {
+			// One very good region (70-90% success rate)
+			return 0.7 + Math.random() * 0.2;
+		} else if (index === badIndex) {
+			// One very bad region (10-25% success rate)
+			return 0.1 + Math.random() * 0.15;
+		} else {
+			// Other regions follow a more extreme distribution
+			const baseRate = Math.random();
+			// Square the random value to bias towards extremes
+			return baseRate * baseRate * 0.7 + 0.15; // Range: 0.15 to 0.85
+		}
+	};
+
+	// Initialize regions
 	useEffect(() => {
-		const newRegions = Array.from({ length: numRegions }, (_, i) => {
-			const baseDemand = 100 * baseSeverity;
-			const poissonDemand = poissonRandom(baseDemand);
-
-			return {
-				id: i + 1,
-				name: `Region ${String.fromCharCode(65 + i)}`,
-				demand: poissonDemand,
-				allocated: 0,
-				// Start with Beta(1,1) prior for each region
-				alpha: 1,
-				beta: 1,
-				severity: baseSeverity,
-			};
-		});
+		const newRegions = Array.from({ length: numRegions }, (_, i) => ({
+			id: i + 1,
+			name: `Region ${String.fromCharCode(65 + i)}`,
+			alpha: 1,
+			beta: 1,
+			hiddenEffectiveness: generateEffectiveness(i, numRegions),
+			successCount: 0,
+			totalAttempts: 0,
+		}));
 		setRegions(newRegions);
 		setRewardHistory([]);
-		setAllocatedResources(0);
-		setCumulativeAllocations({});
-	}, [numRegions, baseSeverity]);
+		setRemainingResources(totalResources);
+		setResults(null);
+	}, [numRegions, totalResources]);
 
-	// Update demands based on severity changes with Poisson distribution
-	useEffect(() => {
-		if (!isSimulating) {
-			setRegions((prevRegions) =>
-				prevRegions.map((region) => ({
-					...region,
-					demand: poissonRandom(100 * baseSeverity),
-					severity: baseSeverity,
-				}))
-			);
-		}
-	}, [baseSeverity, isSimulating]);
-
-	// Sample from beta distribution (more accurate implementation)
+	// Sample from beta distribution
 	const sampleBeta = (alpha: number, beta: number) => {
 		const x = Math.random();
 		const y = Math.random();
-
-		// Using the ratio of gamma variates method
 		const a = Math.pow(x, 1 / alpha);
 		const b = Math.pow(y, 1 / beta);
-
 		return a / (a + b);
 	};
 
-	// Calculate remaining demand for a region
-	const getRemainingDemand = (region: Region) => {
-		const currentAllocation = cumulativeAllocations[region.id] || 0;
-		return Math.max(0, region.demand - currentAllocation);
-	};
-
-	// Calculate reward as defined in documentation
-	const calculateReward = (allocated: number, demand: number) => {
-		return Math.min(allocated / demand, 1);
+	// Simulate Bernoulli trial
+	const simulateTrial = (effectiveness: number): boolean => {
+		return Math.random() < effectiveness;
 	};
 
 	// Reset simulation
 	const resetSimulation = useCallback(() => {
-		setRegions((prevRegions) =>
-			prevRegions.map((region) => ({
+		setRegions((regions) =>
+			regions.map((region) => ({
 				...region,
-				allocated: 0,
 				alpha: 1,
 				beta: 1,
-				demand: poissonRandom(100 * baseSeverity),
+				successCount: 0,
+				totalAttempts: 0,
 			}))
 		);
 		setRewardHistory([]);
+		setRemainingResources(totalResources);
 		setIsSimulating(false);
-		setAllocatedResources(0);
-		setCumulativeAllocations({});
-	}, [baseSeverity]);
+		setResults(null);
+	}, [totalResources]);
 
-	// Simulation step following Thompson Sampling algorithm
+	// Simulate uniform allocation for comparison
+	const simulateUniformAllocation = useCallback(() => {
+		let successes = 0;
+		const attemptsPerRegion = Math.floor(totalResources / regions.length);
+
+		regions.forEach((region) => {
+			for (let i = 0; i < attemptsPerRegion; i++) {
+				if (simulateTrial(region.hiddenEffectiveness)) {
+					successes++;
+				}
+			}
+		});
+
+		return successes;
+	}, [totalResources, regions]);
+
+	// Simulation step
 	const simulationStep = useCallback(() => {
-		if (allocatedResources >= totalResources) {
+		if (remainingResources <= 0) {
 			setIsSimulating(false);
+			// Compare with uniform allocation
+			const uniformSuccesses = simulateUniformAllocation();
+			const thompsonSuccesses = regions.reduce((sum, r) => sum + r.successCount, 0);
+			setResults({
+				thompsonSamplingSuccesses: thompsonSuccesses,
+				uniformAllocationSuccesses: uniformSuccesses,
+				totalAttempts: totalResources,
+			});
 			return;
 		}
 
-		// Sample from Beta distribution for each region
+		// Sample from each region's beta distribution
 		const samples = regions.map((region) => ({
 			id: region.id,
 			value: sampleBeta(region.alpha, region.beta),
@@ -123,64 +127,38 @@ export default function Home() {
 		// Choose region with highest sampled value
 		const chosenRegion = samples.reduce((max, current) => (current.value > max.value ? current : max));
 
-		// Calculate allocation size
-		const resourcesRemaining = totalResources - allocatedResources;
-		const chosenRegionObj = regions.find((r) => r.id === chosenRegion.id)!;
-		const remainingDemand = getRemainingDemand(chosenRegionObj);
-
-		const allocationSize = Math.min(
-			remainingDemand, // Try to meet the demand
-			resourcesRemaining, // Don't exceed available resources
-			20 // Maximum per step for visualization purposes
-		);
-
-		if (allocationSize <= 0) {
-			return;
-		}
-
-		// Update region states with new allocation and Beta parameters
+		// Simulate outcome
 		setRegions((prevRegions) => {
 			return prevRegions.map((region) => {
 				if (region.id === chosenRegion.id) {
-					const newAllocation = (cumulativeAllocations[region.id] || 0) + allocationSize;
-					const reward = calculateReward(allocationSize, region.demand);
-
+					const success = simulateTrial(region.hiddenEffectiveness);
 					return {
 						...region,
-						allocated: newAllocation,
-						// Update Beta parameters based on reward
-						alpha: region.alpha + reward, // Success
-						beta: region.beta + (1 - reward), // Failure
+						alpha: region.alpha + (success ? 1 : 0),
+						beta: region.beta + (success ? 0 : 1),
+						successCount: region.successCount + (success ? 1 : 0),
+						totalAttempts: region.totalAttempts + 1,
 					};
 				}
 				return region;
 			});
 		});
 
-		// Update cumulative allocations
-		setCumulativeAllocations((prev) => ({
-			...prev,
-			[chosenRegion.id]: (prev[chosenRegion.id] || 0) + allocationSize,
-		}));
-
-		// Update allocated resources
-		setAllocatedResources((prev) => prev + allocationSize);
-
-		// Update reward history
+		setRemainingResources((prev) => prev - 1);
 		setRewardHistory((prev) => {
-			const reward = calculateReward(allocationSize, chosenRegionObj.demand);
-			return [...prev, reward];
+			const region = regions.find((r) => r.id === chosenRegion.id);
+			if (!region) return prev;
+			const success = simulateTrial(region.hiddenEffectiveness);
+			return [...prev, success ? 1 : 0];
 		});
-	}, [regions, totalResources, allocatedResources, cumulativeAllocations]);
+	}, [regions, remainingResources, totalResources, simulateUniformAllocation]);
 
 	// Run simulation
 	useEffect(() => {
 		let intervalId: NodeJS.Timeout;
-
 		if (isSimulating) {
-			intervalId = setInterval(simulationStep, 1000); // Run every second
+			intervalId = setInterval(simulationStep, 100); // Faster simulation
 		}
-
 		return () => {
 			if (intervalId) {
 				clearInterval(intervalId);
@@ -195,9 +173,18 @@ export default function Home() {
 					<h1 className="text-4xl font-bold mb-2">STORM</h1>
 					<p className="text-xl text-gray-600">Statistical Tools for Optimizing Resource Management</p>
 					<p className="text-lg text-gray-500 mt-2">
-						Resources Allocated: {allocatedResources.toFixed(0)} / {totalResources}
-						{allocatedResources >= totalResources && <span className="text-red-500 ml-2">(Depleted)</span>}
+						Resources Remaining: {remainingResources} / {totalResources}
 					</p>
+					{results && (
+						<div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+							<h3 className="text-lg font-semibold mb-2">Results</h3>
+							<p>Thompson Sampling: {results.thompsonSamplingSuccesses} successes</p>
+							<p>Uniform Allocation: {results.uniformAllocationSuccesses} successes</p>
+							<p className="text-green-600 font-semibold">
+								Improvement: {(((results.thompsonSamplingSuccesses - results.uniformAllocationSuccesses) / results.uniformAllocationSuccesses) * 100).toFixed(1)}%
+							</p>
+						</div>
+					)}
 				</header>
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -210,8 +197,6 @@ export default function Home() {
 							onReset={resetSimulation}
 							numRegions={numRegions}
 							setNumRegions={setNumRegions}
-							baseSeverity={baseSeverity}
-							setBaseSeverity={setBaseSeverity}
 						/>
 						<RegionChart regions={regions} />
 					</div>

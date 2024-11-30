@@ -1,15 +1,15 @@
 export interface Region {
 	id: number;
 	name: string;
-	demand: number;
-	allocated: number;
 	alpha: number;
 	beta: number;
-	severity: number;
+	hiddenEffectiveness: number;
+	successCount: number;
+	totalAttempts: number;
 }
 
-export interface SimulationState {
-	regions: Region[];
-	totalResources: number;
-	rewardHistory: number[];
+export interface SimulationResults {
+	thompsonSamplingSuccesses: number;
+	uniformAllocationSuccesses: number;
+	totalAttempts: number;
 }
