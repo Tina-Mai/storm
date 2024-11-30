@@ -6,6 +6,7 @@ import ControlPanel from "@/components/ControlPanel";
 import BetaDistributionChart from "@/components/BetaDistributionChart";
 import RewardTrendChart from "@/components/RewardTrendChart";
 import { Region, SimulationResults } from "@/types/simulation";
+import { simulateTrial, initializeRegions, performThompsonSampling, updateRegion, calculateResults } from "@/lib/probability";
 
 export default function Home() {
 	const [numRegions, setNumRegions] = useState(3);
@@ -16,59 +17,14 @@ export default function Home() {
 	const [rewardHistory, setRewardHistory] = useState<number[]>([]);
 	const [results, setResults] = useState<SimulationResults | null>(null);
 
-	// Helper to generate effectiveness values with high variance
-	const generateEffectiveness = (index: number, total: number) => {
-		// Pre-determine which indices will be good and bad
-		const goodIndex = Math.floor(Math.random() * total);
-		let badIndex;
-		do {
-			badIndex = Math.floor(Math.random() * total);
-		} while (badIndex === goodIndex);
-
-		if (index === goodIndex) {
-			// One very good region (70-90% success rate)
-			return 0.7 + Math.random() * 0.2;
-		} else if (index === badIndex) {
-			// One very bad region (10-25% success rate)
-			return 0.1 + Math.random() * 0.15;
-		} else {
-			// Other regions follow a more extreme distribution
-			const baseRate = Math.random();
-			// Square the random value to bias towards extremes
-			return baseRate * baseRate * 0.7 + 0.15; // Range: 0.15 to 0.85
-		}
-	};
-
 	// Initialize regions
 	useEffect(() => {
-		const newRegions = Array.from({ length: numRegions }, (_, i) => ({
-			id: i + 1,
-			name: `Region ${String.fromCharCode(65 + i)}`,
-			alpha: 1,
-			beta: 1,
-			hiddenEffectiveness: generateEffectiveness(i, numRegions),
-			successCount: 0,
-			totalAttempts: 0,
-		}));
+		const newRegions = initializeRegions(numRegions);
 		setRegions(newRegions);
 		setRewardHistory([]);
 		setRemainingResources(totalResources);
 		setResults(null);
 	}, [numRegions, totalResources]);
-
-	// Sample from beta distribution
-	const sampleBeta = (alpha: number, beta: number) => {
-		const x = Math.random();
-		const y = Math.random();
-		const a = Math.pow(x, 1 / alpha);
-		const b = Math.pow(y, 1 / beta);
-		return a / (a + b);
-	};
-
-	// Simulate Bernoulli trial
-	const simulateTrial = (effectiveness: number): boolean => {
-		return Math.random() < effectiveness;
-	};
 
 	// Reset simulation
 	const resetSimulation = useCallback(() => {
@@ -87,58 +43,22 @@ export default function Home() {
 		setResults(null);
 	}, [totalResources]);
 
-	// Simulate uniform allocation for comparison
-	const simulateUniformAllocation = useCallback(() => {
-		let successes = 0;
-		const attemptsPerRegion = Math.floor(totalResources / regions.length);
-
-		regions.forEach((region) => {
-			for (let i = 0; i < attemptsPerRegion; i++) {
-				if (simulateTrial(region.hiddenEffectiveness)) {
-					successes++;
-				}
-			}
-		});
-
-		return successes;
-	}, [totalResources, regions]);
-
 	// Simulation step
 	const simulationStep = useCallback(() => {
 		if (remainingResources <= 0) {
 			setIsSimulating(false);
-			// Compare with uniform allocation
-			const uniformSuccesses = simulateUniformAllocation();
-			const thompsonSuccesses = regions.reduce((sum, r) => sum + r.successCount, 0);
-			setResults({
-				thompsonSamplingSuccesses: thompsonSuccesses,
-				uniformAllocationSuccesses: uniformSuccesses,
-				totalAttempts: totalResources,
-			});
+			setResults(calculateResults(regions, totalResources));
 			return;
 		}
 
-		// Sample from each region's beta distribution
-		const samples = regions.map((region) => ({
-			id: region.id,
-			value: sampleBeta(region.alpha, region.beta),
-		}));
+		const chosenRegion = performThompsonSampling(regions);
 
-		// Choose region with highest sampled value
-		const chosenRegion = samples.reduce((max, current) => (current.value > max.value ? current : max));
-
-		// Simulate outcome
+		// Simulate outcome and update state
 		setRegions((prevRegions) => {
 			return prevRegions.map((region) => {
 				if (region.id === chosenRegion.id) {
 					const success = simulateTrial(region.hiddenEffectiveness);
-					return {
-						...region,
-						alpha: region.alpha + (success ? 1 : 0),
-						beta: region.beta + (success ? 0 : 1),
-						successCount: region.successCount + (success ? 1 : 0),
-						totalAttempts: region.totalAttempts + 1,
-					};
+					return updateRegion(region, success);
 				}
 				return region;
 			});
@@ -151,13 +71,13 @@ export default function Home() {
 			const success = simulateTrial(region.hiddenEffectiveness);
 			return [...prev, success ? 1 : 0];
 		});
-	}, [regions, remainingResources, totalResources, simulateUniformAllocation]);
+	}, [regions, remainingResources, totalResources]);
 
 	// Run simulation
 	useEffect(() => {
 		let intervalId: NodeJS.Timeout;
 		if (isSimulating) {
-			intervalId = setInterval(simulationStep, 100); // Faster simulation
+			intervalId = setInterval(simulationStep, 100);
 		}
 		return () => {
 			if (intervalId) {
