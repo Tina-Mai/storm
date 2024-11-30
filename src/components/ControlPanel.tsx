@@ -3,6 +3,7 @@ import { useGlobal } from "@/context/globalContext";
 import Card from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Play, Pause, RotateCw } from "lucide-react";
 
 export default function ControlPanel() {
 	const { totalResources, setTotalResources, isSimulating, setIsSimulating, resetSimulation, numRegions, setNumRegions } = useGlobal();
@@ -25,12 +26,25 @@ export default function ControlPanel() {
 				</div>
 
 				<div className="pt-2 flex space-x-4">
-					<Button onClick={() => setIsSimulating(!isSimulating)} variant={isSimulating ? "destructive" : "default"}>
-						{isSimulating ? "Stop Simulation" : "Start Simulation"}
+					<Button onClick={() => setIsSimulating(!isSimulating)} variant={isSimulating ? "secondary" : "default"}>
+						{isSimulating ? (
+							<div className="horizontal items-center gap-2">
+								<Pause size={16} />
+								Pause Simulation
+							</div>
+						) : (
+							<div className="horizontal items-center gap-2">
+								<Play size={16} />
+								Start Simulation
+							</div>
+						)}
 					</Button>
 
 					<Button onClick={resetSimulation} variant="outline">
-						Reset
+						<div className="horizontal items-center gap-2">
+							<RotateCw size={16} />
+							Reset
+						</div>
 					</Button>
 				</div>
 			</div>

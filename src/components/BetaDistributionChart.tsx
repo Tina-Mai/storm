@@ -45,6 +45,8 @@ export default function BetaDistributionChart() {
 
 	const options: ChartOptions<"line"> = {
 		responsive: true,
+		maintainAspectRatio: true,
+		aspectRatio: 1.8,
 		animation: {
 			duration: 750,
 		},
@@ -85,7 +87,7 @@ export default function BetaDistributionChart() {
 
 	return (
 		<Card>
-			<div className="vertical gap-1">
+			<div className="vertical gap-1 -mb-1">
 				<div className="horizontal items-center gap-2">
 					<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
 					<TooltipComponent>

@@ -32,16 +32,6 @@ export default function LearningChart() {
 		datasets: [
 			{
 				type: "line",
-				label: "Individual Attempts",
-				data: rewardHistory,
-				borderColor: "rgba(156, 163, 175, 0.5)",
-				backgroundColor: "rgba(156, 163, 175, 0.5)",
-				borderWidth: 1,
-				pointRadius: 2,
-				showLine: false,
-			},
-			{
-				type: "line",
 				label: "Recent Success Rate",
 				data: movingAverage,
 				borderColor: "rgb(75, 192, 192)",
@@ -63,6 +53,8 @@ export default function LearningChart() {
 
 	const options: ChartOptions<"line"> = {
 		responsive: true,
+		maintainAspectRatio: true,
+		aspectRatio: 2.3,
 		plugins: {
 			legend: {
 				position: "top",
@@ -105,13 +97,12 @@ export default function LearningChart() {
 
 	return (
 		<Card>
-			<div className="horizontal items-center gap-2">
+			<div className="horizontal items-center gap-2 -mb-1">
 				<h2 className="font-semibold text-sm uppercase tracking-widest">Learning Progress</h2>
 				<TooltipComponent>
 					<div className="vertical text-xs text-gray-600 gap-1">
 						<p className="font-semibold">How to read this chart:</p>
 						<ul className="list-disc pl-5 space-y-1">
-							<li>Gray dots show individual successes (1) and failures (0)</li>
 							<li>Green line shows recent performance (moving average)</li>
 							<li>Red dashed line shows overall success rate</li>
 							<li>Upward trends indicate the algorithm is learning</li>

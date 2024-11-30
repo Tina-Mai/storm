@@ -69,7 +69,7 @@ export default function RegionChart() {
 
 	return (
 		<Card>
-			<div className="horizontal items-center gap-2">
+			<div className="horizontal items-center gap-2 -mb-1">
 				<h2 className="font-semibold text-sm uppercase tracking-widest">Region Performance</h2>
 				<TooltipComponent>
 					<div className="vertical text-xs text-gray-600 gap-1">

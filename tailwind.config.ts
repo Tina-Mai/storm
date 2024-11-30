@@ -17,7 +17,7 @@ export default {
 			},
 			fontFamily: {
 				sans: ["var(--font-another-sans)"],
-				mono: ["Xanh Mono", "monospace"],
+				mono: ["Space Mono", "monospace"],
 			},
 			borderRadius: {
 				lg: "var(--radius)",
