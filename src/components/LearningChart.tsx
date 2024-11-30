@@ -11,7 +11,7 @@ import TooltipComponent from "@/components/Tooltip";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ScatterController);
 
 export default function LearningChart() {
-	const { rewardHistory } = useGlobal();
+	const { rewardHistory, totalResources } = useGlobal();
 
 	// Calculate moving average
 	const windowSize = 10;
@@ -88,8 +88,11 @@ export default function LearningChart() {
 					display: true,
 					text: "Attempt Number",
 				},
+				min: 1,
+				max: Math.min(totalResources, Math.max(rewardHistory.length + 15, 30)),
 				ticks: {
 					maxTicksLimit: 10,
+					stepSize: 1,
 				},
 			},
 		},

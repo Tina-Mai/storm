@@ -1,12 +1,13 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { useGlobal } from "@/context/globalContext";
+import { Ambulance } from "lucide-react";
 import RegionChart from "@/components/RegionChart";
 import ControlPanel from "@/components/ControlPanel";
 import BetaDistributionChart from "@/components/BetaDistributionChart";
 import LearningChart from "@/components/LearningChart";
-import { useGlobal } from "@/context/globalContext";
 import ResourcesRemaining from "@/components/ResourcesRemaining";
-import { Ambulance } from "lucide-react";
 import Results from "@/components/Results";
 
 export default function Home() {
@@ -24,11 +25,15 @@ export default function Home() {
 			<div className="flex-grow overflow-y-auto w-full bg-slate-100 border border-slate-200 rounded p-4">
 				<div className="grid grid-cols-5 gap-5">
 					{/* Status Column  */}
-					<div className="col-span-3 vertical gap-3 justify-between">
-						{results && <Results />}
-
+					<div className="relative col-span-3 vertical gap-3 justify-between">
+						<div />
 						<RegionChart />
 						<ResourcesRemaining />
+						{results && (
+							<motion.div className="absolute w-full top-0 left-0" initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
+								<Results />
+							</motion.div>
+						)}
 					</div>
 
 					{/* Charts Column */}

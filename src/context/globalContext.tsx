@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
-import { Region, SimulationResults } from "@/types/simulation";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, SetStateAction, Dispatch } from "react";
+import { Region, SimulationResults, ResourceAllocation } from "@/types/simulation";
 import { initializeRegions, performThompsonSampling, updateRegion, calculateResults, simulateTrial } from "@/lib/probability";
 
 interface GlobalContextType {
@@ -13,12 +13,14 @@ interface GlobalContextType {
 	isSimulating: boolean;
 	rewardHistory: number[];
 	results: SimulationResults | null;
+	allocations: ResourceAllocation[];
 
 	// Actions
 	setNumRegions: (num: number) => void;
 	setTotalResources: (resources: number) => void;
 	setIsSimulating: (isSimulating: boolean) => void;
 	resetSimulation: () => void;
+	setAllocations: Dispatch<SetStateAction<ResourceAllocation[]>>;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -31,6 +33,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
 	const [isSimulating, setIsSimulating] = useState(false);
 	const [rewardHistory, setRewardHistory] = useState<number[]>([]);
 	const [results, setResults] = useState<SimulationResults | null>(null);
+	const [allocations, setAllocations] = useState<ResourceAllocation[]>([]);
 
 	// Initialize regions
 	useEffect(() => {
@@ -56,6 +59,7 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
 		setRemainingResources(totalResources);
 		setIsSimulating(false);
 		setResults(null);
+		setAllocations([]);
 	}, [totalResources]);
 
 	// Simulation step
@@ -113,6 +117,8 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
 		setTotalResources,
 		setIsSimulating,
 		resetSimulation,
+		allocations,
+		setAllocations,
 	};
 
 	return <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>;

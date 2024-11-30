@@ -13,3 +13,10 @@ export interface SimulationResults {
 	uniformAllocationSuccesses: number;
 	totalAttempts: number;
 }
+
+export interface ResourceAllocation {
+	id: number;
+	targetRegion: string;
+	success: boolean;
+	progress: number;
+}
