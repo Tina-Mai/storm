@@ -13,8 +13,7 @@ export default function Home() {
 		<main className="min-h-screen p-8">
 			<div className="max-w-7xl mx-auto space-y-8">
 				<header className="text-center">
-					<h1 className="text-4xl font-bold mb-2">STORM</h1>
-					<p className="text-xl text-gray-600">Statistical Tools for Optimizing Resource Management</p>
+					<p className="font-mono text-3xl !text-red-500 mb-2">STORM</p>
 					<p className="text-lg text-gray-500 mt-2">
 						Resources Remaining: {remainingResources} / {totalResources}
 					</p>

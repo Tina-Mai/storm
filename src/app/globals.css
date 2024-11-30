@@ -1,13 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Xanh+Mono:ital@0;1&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* —————————————— TAILWIND STYLES —————————————— */
+
+@layer components {
+	.debug {
+		@apply border border-red-500;
+	}
+
+	.horizontal {
+		@apply flex flex-row;
+	}
+
+	.vertical {
+		@apply flex flex-col;
+	}
+
+	.horizontal.center-v {
+		@apply items-center;
+	}
+
+	.horizontal.center-h {
+		@apply justify-center;
+	}
+
+	.horizontal.center {
+		@apply justify-center items-center;
+	}
+
+	.vertical.center-v {
+		@apply justify-center;
+	}
+
+	.vertical.center-h {
+		@apply items-center;
+	}
+
+	.vertical.center {
+		@apply justify-center items-center;
+	}
+
+	.space-between {
+		@apply justify-between;
+	}
+}
+
+/* —————————————— SITE STYLES —————————————— */
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+	@apply text-black bg-slate-100;
 }
 
 @layer base {
-  :root {
-    --radius: 0.5rem;
-  }
+	:root {
+		--radius: 0.5rem;
+	}
 }
