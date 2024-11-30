@@ -4,10 +4,12 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 import { Line } from "react-chartjs-2";
 import type { ChartData, ChartOptions } from "chart.js";
 import { useGlobal } from "@/context/globalContext";
+import { TooltipItem } from "chart.js";
+import Card from "@/components/ui/card";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ScatterController);
 
-export default function RewardTrendChart() {
+export default function LearningChart() {
 	const { rewardHistory } = useGlobal();
 
 	// Calculate moving average
@@ -70,7 +72,7 @@ export default function RewardTrendChart() {
 			},
 			tooltip: {
 				callbacks: {
-					label: (context) => {
+					label: (context: TooltipItem<"line">) => {
 						const value = context.parsed.y;
 						const label = context.dataset.label;
 						return `${label}: ${(value * 100).toFixed(1)}% success rate`;
@@ -105,7 +107,7 @@ export default function RewardTrendChart() {
 	};
 
 	return (
-		<div className="p-6 bg-white rounded-lg shadow-md">
+		<Card>
 			<Line data={data} options={options} />
 			<div className="mt-4 text-sm text-gray-600">
 				<strong>How to read this chart:</strong>
@@ -116,6 +118,6 @@ export default function RewardTrendChart() {
 					<li>Upward trends indicate the algorithm is learning</li>
 				</ul>
 			</div>
-		</div>
+		</Card>
 	);
 }

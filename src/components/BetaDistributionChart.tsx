@@ -4,6 +4,8 @@ import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 import type { ChartData, ChartOptions } from "chart.js";
 import { useGlobal } from "@/context/globalContext";
+import Card from "@/components/ui/card";
+import { TooltipItem } from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -49,13 +51,9 @@ export default function BetaDistributionChart() {
 			legend: {
 				position: "top",
 			},
-			title: {
-				display: true,
-				text: ["Beta Distributions by Region", "Higher peaks and rightward shifts indicate more successful regions"],
-			},
 			tooltip: {
 				callbacks: {
-					label: (context) => {
+					label: (context: TooltipItem<"line">) => {
 						const region = regions[context.datasetIndex];
 						const expectedValue = region.alpha / (region.alpha + region.beta);
 						return [
@@ -85,7 +83,12 @@ export default function BetaDistributionChart() {
 	};
 
 	return (
-		<div className="p-6 bg-white rounded-lg shadow-md">
+		<Card>
+			<div className="vertical gap-1">
+				<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
+				<p className="text-xs text-gray-500">Higher peaks and rightward shifts indicate more successful regions</p>
+			</div>
+
 			<Line data={data} options={options} />
 			<div className="mt-4 text-sm text-gray-600">
 				<p>
@@ -98,6 +101,6 @@ export default function BetaDistributionChart() {
 					<li>α increases with successes, β with failures</li>
 				</ul>
 			</div>
-		</div>
+		</Card>
 	);
 }

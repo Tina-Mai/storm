@@ -9,6 +9,11 @@ export default {
 			colors: {
 				background: "var(--background)",
 				foreground: "var(--foreground)",
+				theme: {
+					accent: "#133BFF",
+					green: "#08C27F",
+					red: "#F14B4B",
+				},
 			},
 			fontFamily: {
 				sans: ["var(--font-another-sans)"],

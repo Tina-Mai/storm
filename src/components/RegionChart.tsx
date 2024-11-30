@@ -3,6 +3,8 @@
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { useGlobal } from "@/context/globalContext";
+import Card from "@/components/ui/card";
+import { TooltipItem } from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -54,7 +56,7 @@ export default function RegionChart() {
 			},
 			tooltip: {
 				callbacks: {
-					label: (context: any) => {
+					label: (context: TooltipItem<"bar">) => {
 						const region = regions[context.dataIndex];
 						const value = context.parsed.y;
 						const successRate = ((region.successCount / (region.totalAttempts || 1)) * 100).toFixed(1);
@@ -67,7 +69,7 @@ export default function RegionChart() {
 	};
 
 	return (
-		<div className="p-6 bg-white rounded-lg shadow-md">
+		<Card>
 			<Bar data={data} options={options} />
 			<div className="mt-4 text-sm text-gray-600">
 				<p>
@@ -80,6 +82,6 @@ export default function RegionChart() {
 					<li>Higher green-to-red ratio indicates better performance</li>
 				</ul>
 			</div>
-		</div>
+		</Card>
 	);
 }
