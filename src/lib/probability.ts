@@ -1,4 +1,5 @@
 import { Region, SimulationResults } from "@/types/simulation";
+import jStat from "jstat";
 
 /**
  * Initializes regions for the multi-armed bandit problem.
@@ -8,7 +9,7 @@ import { Region, SimulationResults } from "@/types/simulation";
  * @param numRegions - Number of regions (arms) to create
  * @returns Array of initialized regions
  *
- * Mathematical basis:
+ * Probability concepts:
  * - Beta(1,1) is uniform prior (no initial bias)
  * - Each arm has hidden parameter θᵢ (effectiveness)
  */
@@ -37,52 +38,42 @@ export const initializeRegions = (numRegions: number): Region[] => {
  * @param total - Total number of regions
  * @returns Hidden effectiveness rate for the region
  *
- * Mathematical basis:
- * - Creates a non-stationary multi-armed bandit problem
+ * Probability concepts:
+ * - Creates a multi-armed bandit problem
  * - Ensures exploration is necessary (random middle options)
  * - Maintains clear optimal/suboptimal choices for validation
  */
 export const generateEffectiveness = (index: number, total: number) => {
-	// Randomly select indices for good and bad regions
-	const goodIndex = Math.floor(Math.random() * total);
+	// Randomly select indices for good and bad regions using proper uniform sampling
+	const goodIndex = Math.floor(jStat.uniform.sample(0, total));
 	let badIndex;
 	do {
-		badIndex = Math.floor(Math.random() * total);
+		badIndex = Math.floor(jStat.uniform.sample(0, total));
 	} while (badIndex === goodIndex);
 
 	if (index === goodIndex) {
-		// High reward arm: p ∈ [0.7, 0.9]
-		return 0.7 + Math.random() * 0.2;
+		// High reward arm: p ∈ [0.7, 0.85] using uniform distribution
+		return jStat.uniform.sample(0.7, 0.85);
 	} else if (index === badIndex) {
-		// Low reward arm: p ∈ [0.1, 0.25]
-		return 0.1 + Math.random() * 0.15;
+		// Low reward arm: p ∈ [0.2, 0.35] using uniform distribution
+		return jStat.uniform.sample(0.2, 0.35);
 	} else {
-		// Random arms: p ∈ [0, 1]
-		return Math.random();
+		// Random arms: p ∈ [0, 1] using uniform distribution
+		return jStat.uniform.sample(0, 1);
 	}
 };
 
 /**
- * Samples from a Beta distribution using the ratio of uniforms method.
+ * Samples from a Beta distribution using jStat library.
  * Beta distribution is the conjugate prior for Bernoulli trials,
  * making it ideal for tracking success probabilities.
  *
  * @param alpha - Number of successes plus 1 (pseudo-count)
  * @param beta - Number of failures plus 1 (pseudo-count)
  * @returns A random value from Beta(alpha, beta)
- *
- * Mathematical basis:
- * - Beta distribution is conjugate prior for Bernoulli likelihood
- * - As alpha increases, distribution shifts right (more successes)
- * - As beta increases, distribution shifts left (more failures)
- * - Mean of distribution is alpha/(alpha + beta)
  */
 export const sampleBeta = (alpha: number, beta: number) => {
-	const x = Math.random();
-	const y = Math.random();
-	const a = Math.pow(x, 1 / alpha);
-	const b = Math.pow(y, 1 / beta);
-	return a / (a + b);
+	return jStat.beta.sample(alpha, beta);
 };
 
 /**
@@ -92,9 +83,10 @@ export const sampleBeta = (alpha: number, beta: number) => {
  * @param effectiveness - Probability of success (p in Bernoulli(p))
  * @returns true with probability 'effectiveness', false otherwise
  *
- * Mathematical basis:
- * - Bernoulli trial: X ~ Bernoulli(p)
- * - P(X = 1) = p, P(X = 0) = 1-p
+ * Probability concepts:
+ * - For X ~ Bernoulli(p): P(X = 1) = p, P(X = 0) = 1-p
+ * - Implemented using inverse transform sampling:
+ *   If U ~ Uniform(0,1), then I(U < p) ~ Bernoulli(p)
  */
 export const simulateTrial = (effectiveness: number): boolean => {
 	return Math.random() < effectiveness;
@@ -108,7 +100,7 @@ export const simulateTrial = (effectiveness: number): boolean => {
  * @param regions - Array of regions
  * @returns Selected region based on Thompson Sampling
  *
- * Mathematical basis:
+ * Probability concepts:
  * - For each arm i, sample θᵢ ~ Beta(αᵢ, βᵢ)
  * - Select arm with highest sampled θᵢ
  * - Posterior distribution: Beta(αᵢ + successes, βᵢ + failures)
@@ -132,7 +124,7 @@ export const performThompsonSampling = (regions: Region[]) => {
  * @param success - Whether the allocation was successful
  * @returns Updated region
  *
- * Mathematical basis:
+ * Probability concepts:
  * - Posterior update: Beta(α + s, β + f)
  * - s: number of successes (0 or 1)
  * - f: number of failures (1 - s)
@@ -155,7 +147,7 @@ export const updateRegion = (region: Region, success: boolean): Region => {
  * @param totalResources - Total resources to allocate
  * @returns Total number of successes achieved
  *
- * Mathematical basis:
+ * Probability concepts:
  * - Baseline strategy: p(select arm i) = 1/N for all i
  * - Expected reward: Σ (θᵢ/N) where θᵢ is arm i's effectiveness
  */
@@ -181,9 +173,8 @@ export const simulateUniformAllocation = (regions: Region[], totalResources: num
  * @param totalResources - Total resources allocated
  * @returns Comparison of strategies' performance
  *
- * Mathematical basis:
- * - Compares actual Thompson Sampling results to
- * - Expected value of uniform allocation
+ * Probability concepts:
+ * - Compares actual Thompson Sampling results to expected value of uniform allocation
  * - Improvement = (TS_successes - Uniform_successes) / Uniform_successes
  */
 export const calculateResults = (regions: Region[], totalResources: number): SimulationResults => {

@@ -13,11 +13,11 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 export default function LearningChart() {
 	const { rewardHistory, totalResources } = useGlobal();
-	const [key, setKey] = useState(0); // Add a key to force re-render
+	const [key, setKey] = useState(0);
 
 	useEffect(() => {
 		const handleResize = () => {
-			setKey((prev) => prev + 1); // Force re-render on window resize
+			setKey((prev) => prev + 1);
 		};
 
 		window.addEventListener("resize", handleResize);
