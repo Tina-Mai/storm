@@ -16,10 +16,10 @@ export default function Home() {
 				<p className="font-mono text-2xl">STORM</p>
 				<p className="text-sm text-slate-500">Disaster relief resource optimization using Thompson Sampling</p>
 			</header>
-			<div className="flex-grow overflow-y-auto w-full bg-slate-100 border border-slate-200 rounded p-5">
+			<div className="flex-grow overflow-y-auto w-full bg-slate-100 border border-slate-200 rounded p-4">
 				<div className="grid grid-cols-5 gap-5">
-					{/* Status Column (2-col width) */}
-					<div className="col-span-3">
+					{/* Status Column  */}
+					<div className="col-span-3 vertical gap-3">
 						<Card>
 							<h2 className="font-semibold text-sm uppercase tracking-widest">Status</h2>
 							<div>
@@ -39,12 +39,12 @@ export default function Home() {
 								</div>
 							)}
 						</Card>
+						<RegionChart />
 					</div>
 
-					{/* Charts Column (1-col width) */}
-					<div className="vertical col-span-2 gap-5">
+					{/* Charts Column */}
+					<div className="col-span-2 vertical gap-3">
 						<ControlPanel />
-						<RegionChart />
 						<BetaDistributionChart />
 						<LearningChart />
 					</div>

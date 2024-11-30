@@ -100,7 +100,7 @@ export default function BetaDistributionChart() {
 						</div>
 					</TooltipComponent>
 				</div>
-				<p className="text-xs text-gray-500">Higher peaks and rightward shifts indicate more successful regions</p>
+				{/* <p className="text-xs text-gray-500">Higher peaks and rightward shifts indicate more successful regions</p> */}
 			</div>
 			<Line data={data} options={options} />
 		</Card>
