@@ -1,16 +1,10 @@
 "use client";
 
-interface ControlPanelProps {
-	totalResources: number;
-	setTotalResources: (resources: number) => void;
-	isSimulating: boolean;
-	setIsSimulating: (isSimulating: boolean) => void;
-	onReset: () => void;
-	numRegions: number;
-	setNumRegions: (num: number) => void;
-}
+import { useGlobal } from "@/context/globalContext";
 
-export default function ControlPanel({ totalResources, setTotalResources, isSimulating, setIsSimulating, onReset, numRegions, setNumRegions }: ControlPanelProps) {
+export default function ControlPanel() {
+	const { totalResources, setTotalResources, isSimulating, setIsSimulating, resetSimulation, numRegions, setNumRegions } = useGlobal();
+
 	return (
 		<div className="p-6 bg-white rounded-lg shadow-md">
 			<h2 className="text-2xl font-semibold mb-4">Simulation Controls</h2>
@@ -42,7 +36,7 @@ export default function ControlPanel({ totalResources, setTotalResources, isSimu
 						{isSimulating ? "Stop Simulation" : "Start Simulation"}
 					</button>
 
-					<button className="flex-1 px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white" onClick={onReset}>
+					<button className="flex-1 px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white" onClick={resetSimulation}>
 						Reset
 					</button>
 				</div>

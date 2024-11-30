@@ -2,15 +2,13 @@
 
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { Region } from "@/types/simulation";
+import { useGlobal } from "@/context/globalContext";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-interface RegionChartProps {
-	regions: Region[];
-}
+export default function RegionChart() {
+	const { regions } = useGlobal();
 
-export default function RegionChart({ regions }: RegionChartProps) {
 	const data = {
 		labels: regions.map((r) => r.name),
 		datasets: [
@@ -58,7 +56,6 @@ export default function RegionChart({ regions }: RegionChartProps) {
 				callbacks: {
 					label: (context: any) => {
 						const region = regions[context.dataIndex];
-						const isSuccess = context.datasetIndex === 0;
 						const value = context.parsed.y;
 						const successRate = ((region.successCount / (region.totalAttempts || 1)) * 100).toFixed(1);
 

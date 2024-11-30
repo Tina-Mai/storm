@@ -3,14 +3,13 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ScatterController } from "chart.js";
 import { Line } from "react-chartjs-2";
 import type { ChartData, ChartOptions } from "chart.js";
+import { useGlobal } from "@/context/globalContext";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ScatterController);
 
-interface RewardTrendChartProps {
-	rewardHistory: number[];
-}
+export default function RewardTrendChart() {
+	const { rewardHistory } = useGlobal();
 
-export default function RewardTrendChart({ rewardHistory }: RewardTrendChartProps) {
 	// Calculate moving average
 	const windowSize = 10;
 	const movingAverage = rewardHistory.map((_, index) => {
@@ -36,7 +35,7 @@ export default function RewardTrendChart({ rewardHistory }: RewardTrendChartProp
 				backgroundColor: "rgba(156, 163, 175, 0.5)",
 				borderWidth: 1,
 				pointRadius: 2,
-				showLine: false, // This makes it look like scatter
+				showLine: false,
 			},
 			{
 				type: "line",

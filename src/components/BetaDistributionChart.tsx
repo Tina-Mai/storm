@@ -3,15 +3,13 @@
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
 import type { ChartData, ChartOptions } from "chart.js";
-import { Region } from "@/types/simulation";
+import { useGlobal } from "@/context/globalContext";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-interface BetaDistributionChartProps {
-	regions: Region[];
-}
+export default function BetaDistributionChart() {
+	const { regions } = useGlobal();
 
-export default function BetaDistributionChart({ regions }: BetaDistributionChartProps) {
 	const xValues = Array.from({ length: 100 }, (_, i) => i / 100);
 
 	const betaPDF = (x: number, alpha: number, beta: number) => {
