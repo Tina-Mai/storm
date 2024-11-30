@@ -49,15 +49,17 @@ export default function LearningChart() {
 				backgroundColor: "rgba(75, 192, 192, 0.1)",
 				fill: true,
 				tension: 0.4,
+				borderWidth: 2,
 			},
 			{
 				type: "line",
 				label: "Overall Success Rate",
 				data: cumulativeSuccessRate,
 				borderColor: "rgb(255, 99, 132)",
-				borderDash: [5, 5],
+				borderDash: [4, 4],
 				tension: 0.4,
 				pointRadius: 0,
+				borderWidth: 2,
 			},
 		],
 	};
@@ -68,6 +70,12 @@ export default function LearningChart() {
 		plugins: {
 			legend: {
 				position: "top",
+				labels: {
+					boxWidth: 12,
+					boxHeight: 12,
+					usePointStyle: false,
+					pointStyle: "rectRounded",
+				},
 			},
 			tooltip: {
 				callbacks: {

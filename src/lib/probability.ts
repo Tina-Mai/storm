@@ -13,9 +13,11 @@ import { Region, SimulationResults } from "@/types/simulation";
  * - Each arm has hidden parameter θᵢ (effectiveness)
  */
 export const initializeRegions = (numRegions: number): Region[] => {
+	const regionNames = ["Bayes Land", "Piech Land", "Gauss Land", "Poisson Land", "Bernoulli Land", "Thompson Land", "Laplace Land", "Shannon Land", "De Morgan Land", "Kolmogorov Land"];
+
 	return Array.from({ length: numRegions }, (_, i) => ({
 		id: i + 1,
-		name: `Region ${String.fromCharCode(65 + i)}`,
+		name: regionNames[i],
 		alpha: 1,
 		beta: 1,
 		hiddenEffectiveness: generateEffectiveness(i, numRegions),

@@ -64,6 +64,7 @@ export default function BetaDistributionChart() {
 			fill: true,
 			id: region.id.toString(),
 			order: region.id,
+			borderWidth: 2,
 		})),
 	};
 
@@ -73,6 +74,11 @@ export default function BetaDistributionChart() {
 		plugins: {
 			legend: {
 				position: "top",
+				labels: {
+					boxWidth: 12,
+					boxHeight: 12,
+					pointStyle: "rectRounded",
+				},
 			},
 			tooltip: {
 				callbacks: {

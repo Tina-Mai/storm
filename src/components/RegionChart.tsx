@@ -168,7 +168,7 @@ export default function RegionChart() {
 								`,
 							}}
 						>
-							<span className="text-sm font-medium text-slate-700 drop-shadow-sm">{region.name}</span>
+							<span className="text-sm font-medium text-slate-700 drop-shadow-sm text-center">{region.name}</span>
 						</div>
 					</div>
 				);
