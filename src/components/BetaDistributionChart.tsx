@@ -10,6 +10,19 @@ import TooltipComponent from "@/components/Tooltip";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+const REGION_COLORS = [
+	{ border: "rgb(100, 102, 241)", background: "rgba(100, 102, 241, 0.1)" }, // Indigo
+	{ border: "rgb(126, 217, 87)", background: "rgba(126, 217, 87, 0.1)" }, // Green
+	{ border: "rgb(54, 162, 235)", background: "rgba(54, 162, 235, 0.1)" }, // Blue
+	{ border: "rgb(217, 70, 239)", background: "rgba(217, 70, 239, 0.1)" }, // Fuschia
+	{ border: "rgb(255, 159, 64)", background: "rgba(255, 159, 64, 0.1)" }, // Orange
+	{ border: "rgb(255, 99, 132)", background: "rgba(255, 99, 132, 0.1)" }, // Rose
+	{ border: "rgb(75, 192, 192)", background: "rgba(75, 192, 192, 0.1)" }, // Teal
+	{ border: "rgb(255, 205, 86)", background: "rgba(255, 205, 86, 0.1)" }, // Yellow
+	{ border: "rgb(244, 114, 182)", background: "rgba(244, 114, 182, 0.1)" }, // Pink
+	{ border: "rgb(201, 203, 207)", background: "rgba(201, 203, 207, 0.1)" }, // Gray
+];
+
 export default function BetaDistributionChart() {
 	const { regions } = useGlobal();
 
@@ -31,12 +44,12 @@ export default function BetaDistributionChart() {
 
 	const data: ChartData<"line"> = {
 		labels: xValues,
-		datasets: regions.map((region) => ({
+		datasets: regions.map((region, index) => ({
 			type: "line" as const,
 			label: `${region.name}`,
 			data: xValues.map((x) => betaPDF(x, region.alpha, region.beta)),
-			borderColor: `hsl(${region.id * 120}, 70%, 50%)`,
-			backgroundColor: `hsla(${region.id * 120}, 70%, 50%, 0.1)`,
+			borderColor: REGION_COLORS[index % REGION_COLORS.length].border,
+			backgroundColor: REGION_COLORS[index % REGION_COLORS.length].background,
 			fill: true,
 			id: region.id.toString(),
 			order: region.id,
