@@ -9,7 +9,7 @@ const Results = () => {
 	if (!results) return null;
 	return (
 		<Card>
-			<h2 className="font-semibold text-sm uppercase tracking-widest text-center">FINAL RESULTS</h2>
+			<h2 className="font-semibold text-sm uppercase tracking-widest text-center pb-2">FINAL RESULTS</h2>
 			<div className="grid grid-cols-3">
 				<div className="vertical items-center">
 					<ChartSpline size={24} className="pb-1" />

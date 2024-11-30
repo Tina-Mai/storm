@@ -113,7 +113,7 @@ export default function BetaDistributionChart() {
 
 	return (
 		<Card className="h-full flex flex-col">
-			<div className="horizontal items-center gap-2 mb-2">
+			<div className="horizontal items-center gap-2">
 				<h2 className="font-semibold text-sm uppercase tracking-widest">Beta Distributions by Region</h2>
 				<TooltipComponent>
 					<div className="vertical text-xs text-gray-600 gap-1">

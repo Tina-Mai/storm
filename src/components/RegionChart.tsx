@@ -97,12 +97,20 @@ export default function RegionChart() {
 
 			{/* Central Hub */}
 			<div
-				className="absolute left-[275px] top-[275px] w-[60px] h-[60px] rounded-full 
-								border-2 border-slate-200 bg-white 
-								shadow-[4px_4px_10px_rgba(0,0,0,0.1)]
-								flex items-center justify-center"
+				className="absolute left-[270px] top-[270px] w-[60px] h-[60px] rounded-full 
+								border border-slate-200 bg-white 
+								flex items-center justify-center
+								transform transition-transform hover:scale-105
+								cursor-pointer"
+				style={{
+					boxShadow: `
+							3px 3px 0 rgba(203, 213, 225, 0.4),
+							6px 6px 0 rgba(203, 213, 225, 0.3),
+							inset -2px -2px 4px rgba(0,0,0,0.1)
+						`,
+				}}
 			>
-				<span className="text-sm text-slate-600 font-medium">Hub</span>
+				<span className="text-sm text-slate-700 font-medium drop-shadow-sm">Hub</span>
 			</div>
 
 			{/* Regions */}

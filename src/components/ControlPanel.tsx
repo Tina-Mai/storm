@@ -10,7 +10,7 @@ export default function ControlPanel() {
 
 	return (
 		<Card>
-			<h2 className="font-semibold text-sm uppercase tracking-widest">Simulation Controls</h2>
+			<h2 className="font-semibold text-sm uppercase tracking-widest pb-1">Simulation Controls</h2>
 
 			<div className="vertical gap-3">
 				<div className="grid grid-cols-[minmax(auto,100px)_1fr_auto] items-center gap-5">
