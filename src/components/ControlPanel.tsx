@@ -13,14 +13,14 @@ export default function ControlPanel() {
 			<h2 className="font-semibold text-sm uppercase tracking-widest pb-1">Simulation Controls</h2>
 
 			<div className="vertical gap-3">
-				<div className="grid grid-cols-[minmax(auto,100px)_1fr_auto] items-center gap-5">
-					<p className="text-sm font-medium text-gray-700"># of Regions</p>
+				<div className="grid grid-cols-[minmax(auto,120px)_1fr_auto] items-center gap-5">
+					<p className="text-sm font-medium text-gray-700">Number of regions</p>
 					<Slider value={[numRegions]} onValueChange={([value]) => setNumRegions(value)} min={2} max={10} step={1} disabled={isSimulating} />
 					<span className="text-sm text-gray-500 whitespace-nowrap">{numRegions}</span>
 				</div>
 
-				<div className="grid grid-cols-[minmax(auto,100px)_1fr_auto] items-center gap-5">
-					<p className="text-sm font-medium text-gray-700">Total Resources</p>
+				<div className="grid grid-cols-[minmax(auto,120px)_1fr_auto] items-center gap-5">
+					<p className="text-sm font-medium text-gray-700">Total resources</p>
 					<Slider value={[totalResources]} onValueChange={([value]) => setTotalResources(value)} min={100} max={1000} step={50} />
 					<span className="text-sm text-gray-500 whitespace-nowrap">{totalResources}</span>
 				</div>

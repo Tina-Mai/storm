@@ -23,7 +23,7 @@ const Results = () => {
 					<div className="horizontal items-center text-sm gap-1.5">
 						<span className="font-mono text-base">{results.uniformAllocationSuccesses}</span> <p>successes</p>
 					</div>
-					<p className="text-sm text-slate-500 text-center">Uniform Allocation</p>
+					<p className="text-sm text-slate-500 text-center">Evenly distributing across regions</p>
 				</div>
 				<div className={`vertical items-center font-semibold ${positive ? "text-theme-green" : "text-theme-red"}`}>
 					{!positive ? <TrendingDown size={24} className="pb-1" /> : <TrendingUp size={24} className="pb-1" />}
