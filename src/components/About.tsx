@@ -30,9 +30,12 @@ export default function About() {
 						Thompson Sampling “learns” which regions are best to allocate resources to.
 					</p>
 					<p>Try different scenarios by adjusting the parameters in the control panel, and watch how the algorithm learns and adapts its strategy over time!</p>
-					<Button onClick={() => setOpen(false)} className="max-w-min mt-3 self-center">
+					<Button onClick={() => setOpen(false)} className="max-w-min my-3 self-center">
 						Start
 					</Button>
+					<p className="text-xs text-slate-500 text-center">
+						<a href="https://tinabmai.com">Tina Mai</a> | CS 109 | 2024
+					</p>
 				</div>
 			</DialogContent>
 		</Dialog>
