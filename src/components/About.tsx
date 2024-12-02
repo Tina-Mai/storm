@@ -33,9 +33,15 @@ export default function About() {
 					<Button onClick={() => setOpen(false)} className="max-w-min my-3 self-center">
 						Start
 					</Button>
-					<p className="text-xs text-slate-500 text-center">
-						<a href="https://tinabmai.com">Tina Mai</a> | CS 109 | 2024
-					</p>
+					<div className="horizontal items-center justify-center text-xs text-slate-500 text-center gap-2">
+						<a href="https://tinabmai.com" className="underline decoration-dotted">
+							Tina Mai
+						</a>
+						<p>|</p>
+						<p>CS 109</p>
+						<p>|</p>
+						<div>2024</div>
+					</div>
 				</div>
 			</DialogContent>
 		</Dialog>
